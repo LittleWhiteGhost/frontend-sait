@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cart — Ghost x Rauko</title>
+  <link href="https://fonts.googleapis.com/css2?family=Doto:wght@100..900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Doto', sans-serif;
+    }
+
+    body {
+      color: #a00000;
+      min-height: 100vh;
+      padding: 20px;
+      background: #000;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Убрано фоновое видео */
+    /* #bg-video { display: none; } */
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(0, 0, 0, 0.85);
+      border-radius: 16px;
+      padding: 40px;
+      /* Убрана тень */
+      box-shadow: none;
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .cart-header h1 {
+      font-size: 2.2rem;
+      color: #a00000;
+    }
+
+    .link {
+      color: #a00000;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 8px 16px;
+      border: 1px solid #a00000;
+      border-radius: 30px;
+      transition: all 0.3s;
+    }
+
+    .link:hover {
+      background: #a00000;
+      color: #000;
+      transform: translateY(-2px);
+    }
+
+    .cart-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 30px;
+    }
+
+    .cart-items,
+    .cart-summary {
+      background: rgba(0, 0, 0, 0.92);
+      border-radius: 16px;
+      padding: 25px;
+      /* Убрана тень */
+      box-shadow: none;
+      border: 1px solid #a00000;
+    }
+
+    .empty-cart {
+      text-align: center;
+      color: #a00000;
+      font-style: italic;
+      padding: 20px;
+      font-size: 1.2rem;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(160, 0, 0, 0.3);
+      opacity: 0;
+      transform: translateX(-30px);
+      animation: slideInFromLeft 0.6s forwards;
+    }
+
+    .cart-item:nth-child(1) { animation-delay: 0.1s; }
+    .cart-item:nth-child(2) { animation-delay: 0.2s; }
+    .cart-item:nth-child(3) { animation-delay: 0.3s; }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    @keyframes slideInFromLeft {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .item-image {
+      width: 100px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      flex-shrink: 0;
+      border: 1px solid #a00000;
+      background: #000;
+    }
+
+    .item-image img {
+      width: 60px;
+      height: 60px;
+      filter: invert(21%) sepia(91%) saturate(5474%) hue-rotate(356deg) brightness(96%) contrast(103%);
+    }
+
+    .item-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .item-info h3 {
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+      color: #a00000;
+    }
+
+    .item-info p {
+      font-size: 0.95rem;
+      color: #a00000;
+      margin-bottom: 6px;
+    }
+
+    .item-price {
+      font-size: 1.1rem;
+      color: #a00000;
+      font-weight: bold;
+    }
+
+    .item-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .quantity-btn, .remove-btn {
+      width: 28px;
+      height: 28px;
+      background: #a00000;
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+
+    .quantity-btn:hover, .remove-btn:hover {
+      background: #000;
+      color: #a00000;
+    }
+
+    .quantity {
+      min-width: 20px;
+      text-align: center;
+      font-weight: 600;
+      color: #a00000;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.1rem;
+      color: #a00000;
+      margin-bottom: 10px;
+    }
+
+    .summary-row.total {
+      font-size: 1.4rem;
+      color: #a00000;
+      margin-top: 10px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(160, 0, 0, 0.3);
+    }
+
+    .checkout-btn {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #000;
+      background: #a00000;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      margin-top: 10px;
+    }
+
+    .checkout-btn:hover:not(:disabled) {
+      background: #000;
+      color: #a00000;
+      transform: translateY(-2px);
+    }
+
+    .checkout-btn:disabled {
+      background: #4a5a6a;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .note {
+      font-size: 0.85rem;
+      color: #a00000;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      color: #a00000;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .cart-content { grid-template-columns: 1fr; }
+      .cart-header { flex-direction: column; align-items: flex-start; }
+      .link { font-size: 1rem; padding: 6px 12px; }
+    }
+
+    @keyframes matrixAppear {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-on-scroll { animation: matrixAppear 1.2s ease-out forwards; }
+
+    .glitch {
+      position: relative;
+    }
+
+    /* === MODAL STYLES === */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: rgba(0, 0, 0, 0.95);
+      border: 2px solid #a00000;
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      /* Убрана тень */
+      box-shadow: none;
+      transform: scale(0.8);
+      transition: transform 0.3s ease-out;
+    }
+
+    .modal.active .modal-content {
+      transform: scale(1);
+    }
+
+    .modal h2 {
+      font-size: 2.5rem;
+      color: #a00000;
+      margin-bottom: 20px;
+    }
+
+    .modal p {
+      font-size: 1.2rem;
+      color: #a00000;
+      margin-bottom: 30px;
+    }
+
+    .close-modal {
+      padding: 10px 25px;
+      background: #a00000;
+      color: #000;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .close-modal:hover {
+      background: #000;
+      color: #a00000;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="page-cart">
+  <!-- Убрано фоновое видео -->
+  <!-- <video autoplay muted loop id="bg-video">
+    <source src="fon.mp4" type="video/mp4">
+  </video> -->
+
+  <div class="container">
+    <div class="cart-header">
+      <h1 class="glitch" data-text="Your Cart">Your Cart</h1>
+      <a href="index.html" class="link">← Back to shopping</a>
+    </div>
+
+    <div class="cart-content">
+      <div class="cart-items">
+        <div class="empty-cart">Your cart is empty</div>
+      </div>
+
+      <div class="cart-summary">
+        <div class="summary-row">
+          <span>Items: <strong id="item-count">0</strong></span>
+        </div>
+        <div class="summary-row total">
+          <span>Total:</span>
+          <span class="total-price" id="total-price">0 ₽</span>
+        </div>
+        <button class="checkout-btn" id="checkout-btn" disabled>Checkout</button>
+        <p class="note">Prices are calculated individually without markup</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Window -->
+  <div class="modal" id="thankYouModal">
+    <div class="modal-content">
+      <h2>Thank You!</h2>
+      <p>Your order has been successfully placed.</p>
+      <button class="close-modal" id="closeModal">Continue Shopping</button>
+    </div>
+  </div>
+
+  <script>
+    const cartItems = [
+      { id: 1, name: 'Nike Air Max', price: 12000, quantity: 1, category: 'sneakers' },
+      { id: 2, name: 'Adidas Ultraboost', price: 15000, quantity: 2, category: 'pants' },
+      { id: 3, name: 'Casual Shirt', price: 3000, quantity: 1, category: 'shirt' }
+    ];
+
+    const cartItemsContainer = document.querySelector('.cart-items');
+    const itemCountElement = document.getElementById('item-count');
+    const totalPriceElement = document.getElementById('total-price');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const thankYouModal = document.getElementById('thankYouModal');
+    const closeModalBtn = document.getElementById('closeModal');
+
+    function getSVGForCategory(category) {
+      if (category === 'sneakers') {
+        return `<img src="https://img.icons8.com/ios-filled/50/sneakers.png" alt="Sneakers">`;
+      } else if (category === 'shirt') {
+        return `<img src="https://img.icons8.com/ios-filled/50/t-shirt--v1.png" alt="T-shirt">`;
+      } else if (category === 'pants') {
+        return `<img src="https://img.icons8.com/ios/50/trousers.png" alt="Pants">`;
+      }
+      return `<img src="https://img.icons8.com/ios-filled/50/clothes.png" alt="Clothes">`;
+    }
+
+    function updateCart() {
+      if (cartItems.length === 0) {
+        cartItemsContainer.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+        itemCountElement.textContent = '0';
+        totalPriceElement.textContent = '0 ₽';
+        checkoutBtn.disabled = true;
+        return;
+      }
+
+      cartItemsContainer.innerHTML = '';
+      let totalItems = 0;
+      let totalPrice = 0;
+
+      cartItems.forEach(item => {
+        totalItems += item.quantity;
+        totalPrice += item.price * item.quantity;
+
+        const itemElement = document.createElement('div');
+        itemElement.className = 'cart-item';
+        itemElement.innerHTML = `
+          <div class="item-image">${getSVGForCategory(item.category)}</div>
+          <div class="item-info">
+            <h3>${item.name}</h3>
+            <p>Price: ${item.price} ₽</p>
+          </div>
+          <div class="item-price">${item.price * item.quantity} ₽</div>
+          <div class="item-actions">
+            <button class="quantity-btn minus" data-id="${item.id}">-</button>
+            <span class="quantity">${item.quantity}</span>
+            <button class="quantity-btn plus" data-id="${item.id}">+</button>
+            <button class="remove-btn" data-id="${item.id}">×</button>
+          </div>
+        `;
+        cartItemsContainer.appendChild(itemElement);
+      });
+
+      itemCountElement.textContent = totalItems;
+      totalPriceElement.textContent = totalPrice + ' ₽';
+      checkoutBtn.disabled = false;
+    }
+
+    document.addEventListener('click', e => {
+      if (e.target.classList.contains('plus')) {
+        const id = +e.target.dataset.id;
+        const item = cartItems.find(i => i.id === id);
+        if (item) item.quantity++;
+        updateCart();
+      }
+
+      if (e.target.classList.contains('minus')) {
+        const id = +e.target.dataset.id;
+        const item = cartItems.find(i => i.id === id);
+        if (item && item.quantity > 1) item.quantity--;
+        updateCart();
+      }
+
+      if (e.target.classList.contains('remove-btn')) {
+        const id = +e.target.dataset.id;
+        const index = cartItems.findIndex(i => i.id === id);
+        if (index !== -1) cartItems.splice(index, 1);
+        updateCart();
+      }
+
+      if (e.target.id === 'checkout-btn') {
+        // Сброс корзины
+        cartItems.length = 0;
+        updateCart();
+        // Показать модальное окно
+        thankYouModal.classList.add('active');
+      }
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      thankYouModal.classList.remove('active');
+    });
+
+    // Закрытие модального окна при клике вне его области
+    thankYouModal.addEventListener('click', (e) => {
+      if (e.target === thankYouModal) {
+        thankYouModal.classList.remove('active');
+      }
+    });
+
+    updateCart();
+  </script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — Ghost x Rauko</title>
+  <link href="https://fonts.googleapis.com/css2?family=Doto:wght@100..900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Doto', sans-serif;
+    }
+
+    body {
+      color: #a00000;
+      min-height: 100vh;
+      padding: 20px;
+      background: #000;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(0, 0, 0, 0.85);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: none;
+    }
+
+    .form-box {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 40px;
+      background: rgba(0, 0, 0, 0.92);
+      border-radius: 16px;
+      border: 1px solid #a00000;
+      box-shadow: none;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideInFromBottom 0.8s forwards;
+    }
+
+    @keyframes slideInFromBottom {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-box h2 {
+      font-size: 2rem;
+      color: #a00000;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .subtitle {
+      color: #a00000;
+      margin-bottom: 30px;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 25px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(160, 0, 0, 0.3);
+      border-radius: 8px;
+      color: #a00000;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .input-group input:focus {
+      border-color: #a00000;
+    }
+
+    .input-group label {
+      position: absolute;
+      left: 16px;
+      top: 14px;
+      color: rgba(160, 0, 0, 0.6);
+      font-size: 1rem;
+      pointer-events: none;
+      transition: all 0.2s;
+    }
+
+    .input-group input:focus + label,
+    .input-group input:not(:placeholder-shown) + label {
+      top: -10px;
+      left: 12px;
+      background: #000;
+      padding: 0 6px;
+      font-size: 0.85rem;
+      color: #a00000;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: #a00000;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: #000;
+      color: #a00000;
+      transform: translateY(-2px);
+    }
+
+    .back-btn-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: #a00000;
+      color: #000;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .back-btn:hover {
+      background: #000;
+      color: #a00000;
+      transform: translateY(-2px);
+    }
+
+    .message {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 40px;
+      background: rgba(0, 0, 0, 0.92);
+      border-radius: 16px;
+      border: 1px solid #a00000;
+      box-shadow: none;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideInFromBottom 0.8s 0.3s forwards;
+    }
+
+    .message h2 {
+      font-size: 2rem;
+      color: #a00000;
+      margin-bottom: 15px;
+    }
+
+    .message p {
+      color: #a00000;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+
+    .success-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: #a00000;
+      color: #000;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .success-btn:hover {
+      background: #000;
+      color: #a00000;
+      transform: translateY(-2px);
+    }
+
+    .form-box.hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body class="page-login">
+  <div class="container">
+    <div class="form-box" id="loginFormBox">
+      <h2>Login to Account</h2>
+      <p class="subtitle">Enter your credentials</p>
+      <form id="loginForm">
+        <div class="input-group">
+          <input type="text" id="loginInput" name="login" required placeholder=" ">
+          <label for="loginInput">Email or Full Name</label>
+        </div>
+        <div class="input-group">
+          <input type="password" id="passwordInput" name="password" required placeholder=" ">
+          <label for="passwordInput">Password</label>
+        </div>
+        <button type="submit" class="submit-btn">Login</button>
+      </form>
+    </div>
+
+    <div class="message" id="successMessage" style="display: none;">
+      <h2>Login Successful!</h2>
+      <p>Welcome back to your account.</p>
+      <a href="account.html" class="success-btn">Go to My Account</a>
+    </div>
+
+    <div class="message" id="errorMessage" style="display: none;">
+      <h2>Incorrect Data</h2>
+      <p>The email/name or password you entered is incorrect.</p>
+      <a href="login.html" class="success-btn">Try Again</a>
+    </div>
+
+    <div class="back-btn-container">
+      <a href="index.html" class="back-btn">← Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const loginInput = document.getElementById('loginInput').value.trim();
+      const passwordInput = document.getElementById('passwordInput').value;
+
+      const userDataJSON = localStorage.getItem('arxive');
+      if (!userDataJSON) {
+        document.getElementById('loginFormBox').classList.add('hidden');
+        document.getElementById('errorMessage').style.display = 'block';
+        return;
+      }
+
+      const userData = JSON.parse(userDataJSON);
+
+      if ((loginInput === userData.email || loginInput === userData.fullname) && passwordInput === userData.password) {
+        document.getElementById('loginFormBox').classList.add('hidden');
+        document.getElementById('successMessage').style.display = 'block';
+      } else {
+        document.getElementById('loginFormBox').classList.add('hidden');
+        document.getElementById('errorMessage').style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
